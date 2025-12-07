@@ -32,6 +32,9 @@ class CFRTrainer:
         self.beta = 0.0
         self.gamma = 2.0
 
+        # Early stopping parameters
+        self.prev_strategies: Dict[str, Dict[Action, float]] = {}
+
     def set_dcfr_params(self, alpha: float, beta: float, gamma: float):
         """Set DCFR parameters."""
         self.alpha = alpha
@@ -49,13 +52,50 @@ class CFRTrainer:
 
         return self.infosets[key]
 
-    def train(self, root_state: GameState, iterations: int):
+    def _calculate_strategy_change(self) -> Dict[int, float]:
         """
-        Run CFR for the specified number of iterations.
+        Calculate the total change in strategy probabilities for each player.
+
+        Returns:
+            Dictionary mapping player ID to total probability change
+        """
+        player_changes = {p: 0.0 for p in range(self.num_players)}
+
+        for key, infoset in self.infosets.items():
+            current_strategy = infoset.get_average_strategy()
+
+            if key in self.prev_strategies:
+                prev_strategy = self.prev_strategies[key]
+
+                # Calculate L1 distance between strategies
+                change = 0.0
+                for action in current_strategy:
+                    curr_prob = current_strategy[action]
+                    prev_prob = prev_strategy.get(action, 0.0)
+                    change += abs(curr_prob - prev_prob)
+
+                player_changes[infoset.player] += change
+
+            # Update previous strategy
+            self.prev_strategies[key] = current_strategy.copy()
+
+        return player_changes
+
+    def train(
+        self,
+        root_state: GameState,
+        iterations: int,
+        epsilon: float = 1e-4,
+        check_interval: int = 10,
+    ) -> int:
+        """
+        Run CFR for the specified number of iterations with early stopping.
 
         Args:
             root_state: The initial game state
-            iterations: Number of iterations to run
+            iterations: Maximum number of iterations to run
+            epsilon: Convergence threshold (sum of all player strategy changes)
+            check_interval: How often to check for convergence
         """
         for i in range(iterations):
             self.iteration += 1
@@ -66,8 +106,39 @@ class CFRTrainer:
 
             self._apply_post_iteration_updates()
 
-            if (i + 1) % 100 == 0 or i == 0:
-                print(f"Iteration {i + 1}/{iterations}")
+            # Check for convergence (skip until we have previous strategies to compare)
+            if (
+                i > 0
+                and (i + 1) % check_interval == 0
+                and len(self.prev_strategies) > 0
+            ):
+                player_changes = self._calculate_strategy_change()
+                total_change = sum(player_changes.values())
+
+                if (i + 1) % 100 == 0:
+                    print(
+                        f"Iteration {i + 1}/{iterations}, Total change: {total_change:.6f}"
+                    )
+                    for player, change in player_changes.items():
+                        print(f"  Player {player}: {change:.6f}")
+
+                if total_change < epsilon:
+                    print(f"\nConverged at iteration {i + 1}")
+                    print(
+                        f"Total strategy change: {total_change:.6f} < epsilon: {epsilon}"
+                    )
+                    return i
+            else:
+                # Store strategies even on first check to establish baseline
+                if (i + 1) % check_interval == 0:
+                    for key, infoset in self.infosets.items():
+                        self.prev_strategies[key] = (
+                            infoset.get_average_strategy().copy()
+                        )
+
+                if (i + 1) % 100 == 0 or i == 0:
+                    print(f"Iteration {i + 1}/{iterations}")
+        return iterations
 
     def _cfr(
         self, state: GameState, reach_probs: List[float], updating_player: int

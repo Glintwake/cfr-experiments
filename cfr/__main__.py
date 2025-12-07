@@ -147,16 +147,16 @@ def run_kuhn_poker_example(iterations: int = 10000, show_progress: bool = True):
             finally:
                 globals()["print"] = original_print
         else:
-            trainer.train(root_state, iterations)
+            num_iter = trainer.train(root_state, iterations)
 
         print()
         trainer.print_strategy()
-        results[variant] = trainer
+        results[variant] = (trainer, num_iter)
         print("\n" + "-" * 60)
         print(f"{variant.upper()} training complete\n")
 
-    for variant, trainer in results.items():
-        print(f"\n{variant.upper()}:")
+    for variant, [trainer, iters] in results.items():
+        print(f"\n{variant.upper()} (num iterations = {iters}):")
         for card in ["J", "Q", "K"]:
             key = f"{card}:"
             infoset = trainer.infosets.get(key)
@@ -173,5 +173,3 @@ def run_kuhn_poker_example(iterations: int = 10000, show_progress: bool = True):
 
 if __name__ == "__main__":
     results = run_kuhn_poker_example()
-
-    __import__("pprint").pprint(results)
