@@ -39,20 +39,18 @@ Strategies
 
 Probabilities
 - $\pi^{\sigma}(h) = \prod_{(h,a) \subseteq h} \sigma_{P(h)}(h,a)$ - joint probability of reaching state *h* if all players play according to $\sigma$
-- $\pi_i^{\sigma}(h)$ -
-- $\pi_{-i}^{\sigma}(h)$ -
 
 Best answer
 - $\text{BR}(\sigma_i) \in \arg\max_{\sigma_{-i}} u_i(\sigma_i, \sigma_{-i})$ -
 - $u_i(\sigma_i, \text{BR}(\sigma_i))= \max_{\sigma_{-i}} u_i(\sigma_i, \sigma_{-i})$ - the best response to $\sigma_i$
-- $\forall i:\;u_i(\sigma_i^*, \sigma_{-i}^*) = \max_{\sigma_i} u_i(\sigma_i, \sigma_{-i}^*)$ - Nash equilibrium
-- $e(\sigma_i)=u_i(\sigma_i^*, \text{BR}(\sigma_i^*))-u_i(\sigma_i, \text{BR}(\sigma_i)).$ - exploitability of a strategy relative to the best response to the Nash equilibrium strategy
+- $$\forall i:\; u_i(\sigma_i^*, \sigma_{-i}^*) = \max_{\sigma_i} u_i(\sigma_i, \sigma_{-i}^*)$$ - Nash equilibrium
+- $$e(\sigma_i) = u_i(\sigma_i^*, \text{BR}(\sigma_i^*)) - u_i(\sigma_i, \text{BR}(\sigma_i))$$ - exploitability of a strategy relative to the best response to the Nash equilibrium strategy
 
-У CFR вектор стратегій для кожного інфосету визначається за допомогою алгоритму Regret-Minimization. Алгоритм Regret-Matching (RM) використовується у CFR через простоту та зрозумілість. 
+In CFR, the strategy vector for each infoset is determined using the Regret-Minimization algorithm. The Regret-Matching (RM) algorithm is used in CFR because of its simplicity and clarity. 
 
 The expected value of player *i* in state *h* If all players play according to the strategy profile $\sigma$ from this point is defined as $v_i^{\sigma}(h)$.
 
-$v^\sigma(I)=\sum_{h \in I}\pi_{-i}^\sigma(h \mid I)\, v_i^\sigma(h)$ and $v^\sigma(I,a)=\sum_{h \in I}\pi_{-i}^\sigma(h \mid I)\, v_i^\sigma(h \cdot a)$ is the expected value for player *i* in infset *I* where *i* acts is the weighted average of all states in *I* where the weight is proportional to player * i* that he is in a certain state when he knows that he is in *I*, where $\pi_{-i}^\sigma(h \mid I)=\frac{\pi_{-i}^\sigma(h)} {\pi_{-i}^\sigma(I)}.$
+$v^\sigma(I)=\sum_{h \in I}\pi_{-i}^\sigma(h \mid I)\, v_i^\sigma(h)$ and $v^\sigma(I,a)=\sum_{h \in I}\pi_{-i}^\sigma(h \mid I)\, v_i^\sigma(h \cdot a)$ is the expected value for player *i* in infset *I* where *i* acts is the weighted average of all states in *I* where the weight is proportional to player *i* that he is in a certain state when he knows that he is in *I*, where $\pi_{-i}^\sigma(h \mid I)=\frac{\pi_{-i}^\sigma(h)} {\pi_{-i}^\sigma(I)}.$
 
 Let $\sigma^t$ be the strategy at iteration t. Instantaneous regret for action *a* in *I* at *t*:
 $r^t(I,a)=v^{\sigma^t}(I,a)-v^{\sigma^t}(I).$
@@ -69,8 +67,14 @@ $R^T(I) = \max_{a} R_+^T(I,a).$
 Regret of player *i* during the entire game:
 $R_i^T=\max_{\sigma_i}\sum_{t=1}^{T}\bigl[u_i(\sigma_i, \sigma_{-i}^t)-u_i(\sigma_i^t, \sigma_{-i}^t)\bigr].\tag{2}$
 
-In RM, the player chooses the distribution of actions in the information network in proportion to the positive regret for these actions. For example, at iteration *t+1*
-$\sigma^{T+1}(I,a)=\begin{cases}\dfrac{R_+^T(I,a)}{\displaystyle\sum_{a'\in A(I)} R_+^T(I,a')}, & \text{if }\displaystyle\sum_{a'\in A(I)} R_+^T(I,a')>0,\\[1ex]\dfrac{1}{\lvert A(I)\rvert}, & \text{otherwise.}\end{cases}$ 
+In **Regret Matching (RM)**, the player chooses the distribution of actions in the information set in proportion to the positive regret for these actions. For example, at iteration \(t+1\):  
+$$
+\sigma^{T+1}(I,a) =
+\begin{cases}
+\dfrac{R_+^T(I,a)}{\displaystyle\sum_{a' \in A(I)} R_+^T(I,a')}, & \text{if } \displaystyle\sum_{a' \in A(I)} R_+^T(I,a') > 0,\\[1ex]
+\dfrac{1}{|A(I)|}, & \text{otherwise.}
+\end{cases}
+$$
 
 If the player plays RM in each iteration, then
 
@@ -79,8 +83,13 @@ $R^T(I)\le\Delta\, |A(I)| \sqrt{T}\quad$
 If the player plays CFR in each iteration, then
 $R_i^T\le\sum_{I \in \mathcal{I}_i} R^T(I)\tag{4}$, and therefore, when $t \to \inf$ $\frac{R_i^T}{T} \to 0.$
 
-**The average strategy of player *i* for infoset *I*
-$\bar{\sigma}_i^T(I)=\frac{\sum\limits_{t=1}^{T} \pi_i^{\sigma^t}(I)\, \sigma_i^t(I)} {\sum\limits_{t=1}^{T}\pi_i^{\sigma^t}(I)}.\tag{5}$
+The **average strategy** of player *i* for infoset *I* is:
+
+$$
+\bar{\sigma}_i^T(I) = 
+\dfrac{\sum\limits_{t=1}^{T} \pi_i^{\sigma^t}(I)\, \sigma_i^t(I)}
+      {\sum\limits_{t=1}^{T} \pi_i^{\sigma^t}(I)} \tag{5}
+$$
 
 CFR minimizes external regret, therefore it coincides with coarse correlated equilibrium. In zero-sum games with two players, it is also a Nash equilibrium. If the average regret of both players satisfies $\frac{R_i^T}{T} \le \varepsilon,$ then their average strategies form a 2$\epsilon$-Nash equilibrium.
 
@@ -90,8 +99,14 @@ Although CFR updates players' regrets at each iteration, in practice it works be
 
 CFR+ is CFR with minor changes, such as:
 - at each iteration where regret < 0, it is assigned 0
-- CFR+ chooses a strategy on move *t+1* according to the *RM+* approach, which is identical to 
-$\sigma^{T+1}(I,a)=\begin{cases}\dfrac{R_+^T(I,a)}{\displaystyle\sum_{a'\in A(I)} R_+^T(I,a')}, & \text{if }\displaystyle\sum_{a'\in A(I)} R_+^T(I,a')>0,\\[1ex]\dfrac{1}{\lvert A(I)\rvert}, & \text{otherwise.}\end{cases}$ 
+- **CFR+** chooses a strategy on move \(t+1\) according to the *RM+* approach, which is identical to:
+$$
+\sigma^{T+1}(I,a) =
+\begin{cases}
+\dfrac{R_+^T(I,a)}{\displaystyle\sum_{a' \in A(I)} R_+^T(I,a')}, & \text{if } \displaystyle\sum_{a' \in A(I)} R_+^T(I,a') > 0,\\[1ex]
+\dfrac{1}{|A(I)|}, & \text{otherwise.}
+\end{cases}
+$$
 
 However, it uses a regret-like value $Q^T(I,a) = \max\{0, Q^{T-1}(I,a) + r^T(I,a)\}$.
 This algorithm also uses a weighted average strategy where iteration *t* is weighted by *t* rather than by uniformly distributed strategy weights as in CFR.
@@ -109,7 +124,8 @@ This algorithm also uses a weighted average strategy where iteration *t* is weig
 
 
 Results:
-![Convergence](./photos/cfr_convergence_comparison.png)
+![Convergence](./photos/photos/5316531396731933145.jpg)
 
-![Strategy Changes](./photos/cfr_player_changes.png)
+![Strategy Changes](./photos/photos/5316531396731933146.jpg)
+
 
