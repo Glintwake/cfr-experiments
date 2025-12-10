@@ -80,17 +80,19 @@ If the player plays CFR in each iteration, then
 $R_i^T\le\sum_{I \in \mathcal{I}_i} R^T(I)\tag{4}$, and therefore, when $t \to \inf$ $\frac{R_i^T}{T} \to 0.$
 
 The **average strategy** of player *i* for infoset *I* is:
+
 σ̄_i^T(I) = (sum_{t=1}^{T} π_i^{σ^t}(I) * σ_i^t(I)) / (sum_{t=1}^{T} π_i^{σ^t}(I))
 
 CFR minimizes external regret, therefore it coincides with coarse correlated equilibrium. In zero-sum games with two players, it is also a Nash equilibrium. If the average regret of both players satisfies $\frac{R_i^T}{T} \le \varepsilon,$ then their average strategies form a 2$\epsilon$-Nash equilibrium.
 
-**This is why CFR is an algorithm for finding $\epsilon$-Nash equilibrium for two-player zero-sum games.
+**This is why CFR is an algorithm for finding $\epsilon$-Nash equilibrium for two-player zero-sum games.**
 
 Although CFR updates players' regrets at each iteration, in practice it works better to update regrets in turn order. However, this complicates the convergence of the theory.
 
 CFR+ is CFR with minor changes, such as:
 - at each iteration where regret < 0, it is assigned 0
 - **CFR+** chooses a strategy on move \(t+1\) according to the *RM+* approach, which is identical to:
+
 σ^{T+1}(I,a) = 
   - R_+^T(I,a) / sum_{a' in A(I)} R_+^T(I,a'), if sum_{a' in A(I)} R_+^T(I,a') > 0
   - 1 / |A(I)|, otherwise
@@ -111,9 +113,10 @@ This algorithm also uses a weighted average strategy where iteration *t* is weig
 
 
 Results:
-![Convergence](./photos/photos/5316531396731933145.jpg)
+![Convergence](./photos/5316531396731933145.jpg)
 
-![Strategy Changes](./photos/photos/5316531396731933146.jpg)
+![Strategy Changes](./photos/5316531396731933146.jpg)
+
 
 
 
