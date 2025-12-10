@@ -96,70 +96,20 @@ $\sigma^{T+1}(I,a)=\begin{cases}\dfrac{R_+^T(I,a)}{\displaystyle\sum_{a'\in A(I)
 However, it uses a regret-like value $Q^T(I,a) = \max\{0, Q^{T-1}(I,a) + r^T(I,a)\}$.
 This algorithm also uses a weighted average strategy where iteration *t* is weighted by *t* rather than by uniformly distributed strategy weights as in CFR.
 
-Types of CFR improvements
-$
-\begin{table}[h]
-\centering
-\caption{Comparison of CFR variants}
-\label{tab:cfr_variants}
-\begin{tabular}{lccccl}
-\hline
-Algorithm
-& Positive regrets
-& Negative regrets
-& Avg. strategy weight
-& Regret floor
-& Notes \\
-\hline
+# Types of CFR Improvements
 
-CFR
-& $1$
-& $1$
-& $1$
-& No
-& Vanilla CFR \\
+| Algorithm             | Positive regrets       | Negative regrets       | Avg. strategy weight | Regret floor | Notes                       |
+|----------------------|---------------------|---------------------|-------------------|-------------|----------------------------|
+| CFR                  | 1                   | 1                   | 1                 | No          | Vanilla CFR                |
+| CFR⁺                 | 1                   | 0                   | ∝ t²               | Yes         | Faster empirical convergence |
+| LCFR                 | ∝ t                 | ∝ t                 | ∝ t               | No          | Linear discounting         |
+| LCFR⁺                | ∝ t                 | 0                   | ∝ t               | Yes         | Worse in practice          |
+| DCFR(α,β,γ)          | (t/(t+1))^α         | (t/(t+1))^β         | (t/(t+1))^γ       | Optional    | General framework          |
+| DCFR                 | α=3/2               | β=0                 | γ=2               | Yes         | Best empirical performance |
 
-CFR$^+$
-& $1$
-& $0$
-& $\propto t^2$
-& Yes
-& Faster empirical convergence \\
-
-LCFR
-& $\propto t$
-& $\propto t$
-& $\propto t$
-& No
-& Linear discounting \\
-
-LCFR$^+$
-& $\propto t$
-& $0$
-& $\propto t$
-& Yes
-& Worse in practice \\
-
-DCFR$(\alpha,\beta,\gamma)$
-& $\left(\frac{t}{t+1}\right)^{\alpha}$
-& $\left(\frac{t}{t+1}\right)^{\beta}$
-& $\left(\frac{t}{t+1}\right)^{\gamma}$
-& Optional
-& General framework \\
-
-DCFR
-& $\alpha=\frac{3}{2}$
-& $\beta=0$
-& $\gamma=2$
-& Yes
-& Best empirical performance \\
-
-\hline
-\end{tabular}
-\end{table}
-$
 
 Results:
 ![Convergence](./photos/cfr_convergence_comparison.png)
 
 ![Strategy Changes](./photos/cfr_player_changes.png)
+
