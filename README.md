@@ -1,12 +1,11 @@
 **Solving Imperfect-Information Games via Discounted Regret Minimization**
 *paper by Noam Brown and Tuomas Sandholm*
 
+**Review**
 Games with incomplete information can be used for many purposes, such as modeling negotiations, auctions, betting games, and so on. As always in situations where we do not have complete information and probabilities come into play, there is poker.
 As we learned in the Game Theory course, the ultimate goal (solution) of a situation (game) is to maximize the player's winnings (search for equilibrium).
 
 Since solving such games and drawing decision trees by hand would be very difficult, tedious, and wasteful of paper, computer algorithms are used for such simulations, the most popular of which are Counterfactual Regret Minimization (CFR) and CFR+, which works better.
-
-**In this study, we will test the performance of CFR and CFR+, see how CFR variants can be devised that outperform CFR+, and show that CFR+ does not perform very well in games where actions have very costly consequences.**
 
 Theory:
 Sequential games, description of standard components
@@ -112,11 +111,32 @@ This algorithm also uses a weighted average strategy where iteration *t* is weig
 | DCFR                 | α=3/2               | β=0                 | γ=2               | Yes         | Best empirical performance |
 
 
-Results:
+**Report**
+We decided to focus on the implementation and simulation of a Kuhn poker game.
+To do this, we implemented all of the above types of CFR, as well as the game itself, and conducted simulations with early stopping. The results are shown below. 
+
+Our implementation consists of several parts: CFR variants, game, additional classes (information set, game state, action).
+
+All these classes describe their part of the game:
+- Action - a class that describes an action in the game
+- Info set - a class for describing and creating a set of information known to players
+- Game state - an abstract class for describing the state of the game at a specific point in time
+- Cfr - implementation of the 4 types of CFR described above in the table
+
+All of this is used to simulate the game of Kuhn poker implememted in main.py.
+
+First, we implemented a simple training of 10,000 iterations to check if our algorithm works. Then we came up with an idea for optimization - to check if the equilibrium state of the game has not changed for several moves, so we added early stopping to reduce the amount of time spent on training. 
+Overall, it didn't take much time, but it reduced the training time by three times.
+
+We can see from the graphs that thanks to early stopping, DCFR started to stop at 2000 iterations, which significantly reduced the training time. 
+
+**Results**
 ![Convergence](./photos/5316531396731933145.jpg)
 
 ![Strategy Changes](./photos/5316531396731933146.jpg)
 
+From these results, we can see that the DCFR algorithm converges the fastest, while VANILLA, or simple CFR, converges the slowest. 
+We can also see that all types of CFR except Linear converge with significant jumps, while LCFR converges along a certain branch of the hyperbola. 
+The graphs showing changes in player strategy indicate that strategy changed most often with CFR, least often with DCFR, and most calmly with LCFR. 
 
-
-
+Therefore, we can conclude that games with incomplete information, especially complex ones such as poker, are played for a long time until equilibrium is reached. 
