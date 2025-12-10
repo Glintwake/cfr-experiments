@@ -2,6 +2,7 @@
 *paper by Noam Brown and Tuomas Sandholm*
 
 **Review**
+
 Games with incomplete information can be used for many purposes, such as modeling negotiations, auctions, betting games, and so on. As always in situations where we do not have complete information and probabilities come into play, there is poker.
 As we learned in the Game Theory course, the ultimate goal (solution) of a situation (game) is to maximize the player's winnings (search for equilibrium).
 
@@ -106,12 +107,11 @@ This algorithm also uses a weighted average strategy where iteration *t* is weig
 | CFR                  | 1                   | 1                   | 1                 | No          | Vanilla CFR                |
 | CFR⁺                 | 1                   | 0                   | ∝ t²               | Yes         | Faster empirical convergence |
 | LCFR                 | ∝ t                 | ∝ t                 | ∝ t               | No          | Linear discounting         |
-| LCFR⁺                | ∝ t                 | 0                   | ∝ t               | Yes         | Worse in practice          |
-| DCFR(α,β,γ)          | (t/(t+1))^α         | (t/(t+1))^β         | (t/(t+1))^γ       | Optional    | General framework          |
 | DCFR                 | α=3/2               | β=0                 | γ=2               | Yes         | Best empirical performance |
 
 
 **Report**
+
 We decided to focus on the implementation and simulation of a Kuhn poker game.
 To do this, we implemented all of the above types of CFR, as well as the game itself, and conducted simulations with early stopping. The results are shown below. 
 
@@ -140,3 +140,4 @@ We can also see that all types of CFR except Linear converge with significant ju
 The graphs showing changes in player strategy indicate that strategy changed most often with CFR, least often with DCFR, and most calmly with LCFR. 
 
 Therefore, we can conclude that games with incomplete information, especially complex ones such as poker, are played for a long time until equilibrium is reached. 
+
